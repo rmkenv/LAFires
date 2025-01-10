@@ -126,7 +126,7 @@ The script generates two main output files:
 
 ## License
 
-This project is licensed under the MIT License - see the `LICENSE.md` file for details.
+This project is licensed under the GPL-3.0 license.
 
 ## Acknowledgments
 
@@ -136,5 +136,5 @@ This project is licensed under the MIT License - see the `LICENSE.md` file for d
 
 ## Contact
 
-- **Your Name** - [@yourgithub](https://github.com/yourusername)
+- **Ryan Kmetz** - [@yourgithub](https://github.com/rmkenv)
 - **Project Link:** [https://github.com/yourusername/pool-detection](https://github.com/yourusername/pool-detection)
