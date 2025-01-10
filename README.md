@@ -136,5 +136,4 @@ This project is licensed under the GPL-3.0 license.
 
 ## Contact
 
-- **Ryan Kmetz** - [@yourgithub](https://github.com/rmkenv)
-- **Project Link:** [https://github.com/yourusername/pool-detection](https://github.com/yourusername/pool-detection)
+- **Ryan Kmetz** - [@RMKENV](https://github.com/rmkenv)
