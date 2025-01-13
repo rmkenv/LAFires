@@ -1,2 +1,13 @@
+
 streamlit
-folium
+openeo
+pandas
+shapely
+numpy
+scikit-learn
+geopy
+tqdm
+rasterio
+matplotlib
+scipy
+scikit-image
