@@ -3,6 +3,14 @@ import streamlit as st
 # Streamlit app title
 st.title("Age of Los Angeles")
 
+# About Section
+st.sidebar.title("About")
+st.sidebar.info(
+    """
+    **Built:LA** developed by [Omar Ureta](https://cityhubla.github.io/LA_Building_Age/).
+    """
+)
+
 # Mapbox access token
 mapbox_access_token = "pk.eyJ1IjoiY3J1emluNzN2dyIsImEiOiI3RDdhUi1NIn0.jaEqREZw7QQMRafKPNBdmA"
 
