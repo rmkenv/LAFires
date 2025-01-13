@@ -1,95 +1,17 @@
 import streamlit as st
-import openeo
-import tempfile
-import os
-import rasterio
-from rasterio.plot import show
 
 # Streamlit app title
-st.title("Sentinel-2 Imagery Viewer")
+st.title("Age of Los Angeles")
 
-# Define Area of Interest (AOI) (Los Angeles City boundary - approximate)
-aoi = {
-    "xmin": -118.6681,
-    "ymin": 33.7037,
-    "xmax": -118.1553,
-    "ymax": 34.3373,
-    "spatialReference": {"wkid": 4326}
-}
+# Mapbox access token
+mapbox_access_token = "pk.eyJ1IjoiY3J1emluNzN2dyIsImEiOiI3RDdhUi1NIn0.jaEqREZw7QQMRafKPNBdmA"
 
-# openEO backend URL
-OPENEO_BACKEND = "https://openeo.dataspace.copernicus.eu"
-
-# Client credentials (replace with your actual credentials)
-CLIENT_ID = "YOUR_CLIENT_ID"  # Replace with your actual client ID
-CLIENT_SECRET = "YOUR_CLIENT_SECRET"  # Replace with your actual client secret
-
-def connect_openeo():
-    """Connects to the openEO backend using OAuth 2.0."""
-    connection = openeo.connect(OPENEO_BACKEND).authenticate_oidc()
-    return connection
-
-def load_sentinel2_data(connection, aoi, start_date, end_date):
-    """Loads Sentinel-2 data using openEO."""
-    spatial_extent = {
-        "west": aoi["xmin"],
-        "south": aoi["ymin"],
-        "east": aoi["xmax"],
-        "north": aoi["ymax"]
-    }
-    s2_cube = connection.load_collection(
-        "SENTINEL2_L2A",
-        spatial_extent=spatial_extent,
-        temporal_extent=[start_date, end_date],
-        bands=["B04", "B03", "B02"]  # RGB bands
-    )
-    return s2_cube
-
-def download_sentinel2_image(s2_cube):
-    """Downloads Sentinel-2 imagery as a GeoTIFF."""
-    with tempfile.TemporaryDirectory() as tmpdir:
-        output_file = os.path.join(tmpdir, "sentinel2_image.tif")
-        s2_cube.download(output_file)
-        return output_file
-
-# Connect to openEO backend
-st.write("Connecting to openEO backend...")
-try:
-    connection = connect_openeo()
-    st.success("Connected to openEO backend.")
-except Exception as e:
-    st.error(f"Failed to connect to openEO backend: {e}")
-    st.stop()
-
-# Load Sentinel-2 data
-st.write("Loading Sentinel-2 data...")
-try:
-    start_date = "2024-12-01"
-    end_date = "2025-01-09"
-    s2_cube = load_sentinel2_data(connection, aoi, start_date, end_date)
-    st.success("Sentinel-2 data loaded.")
-except Exception as e:
-    st.error(f"Failed to load Sentinel-2 data: {e}")
-    st.stop()
-
-# Download Sentinel-2 imagery
-st.write("Downloading Sentinel-2 imagery...")
-try:
-    sentinel2_file = download_sentinel2_image(s2_cube)
-    st.success("Sentinel-2 imagery downloaded.")
-except Exception as e:
-    st.error(f"Failed to download Sentinel-2 imagery: {e}")
-    st.stop()
-
-# Display the Sentinel-2 imagery on the map
-st.write("Displaying Sentinel-2 imagery on the map...")
-
-# Convert the GeoTIFF to a Mapbox raster tile layer
+# HTML code for the Mapbox map
 map_html = f"""
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Sentinel-2 Imagery</title>
+    <title>Age of Los Angeles</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
@@ -110,12 +32,84 @@ map_html = f"""
         width: 100%;
         height: 600px;
       }}
+      #legend {{
+        position: absolute;
+        bottom: 10px;
+        right: 10px;
+        background: rgba(255, 255, 255, 0.8);
+        padding: 10px;
+        font-size: 14px;
+        border-radius: 5px;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+      }}
+      .legend-item {{
+        display: flex;
+        align-items: center;
+        margin-bottom: 5px;
+      }}
+      .legend-color {{
+        width: 20px;
+        height: 20px;
+        margin-right: 10px;
+        border-radius: 3px;
+      }}
     </style>
   </head>
   <body>
     <div id="map"></div>
+    <div id="legend">
+      <h4>Legend</h4>
+      <div class="legend-item">
+        <div class="legend-color" style="background-color: #d7d4d4;"></div>
+        <span>1890-1899</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-color" style="background-color: #22ecf0;"></div>
+        <span>1900-1909</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-color" style="background-color: #19d1fd;"></div>
+        <span>1910-1919</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-color" style="background-color: #14b1fd;"></div>
+        <span>1920-1929</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-color" style="background-color: #2c7fdb;"></div>
+        <span>1930-1939</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-color" style="background-color: #3d52bf;"></div>
+        <span>1940-1949</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-color" style="background-color: #6539b3;"></div>
+        <span>1950-1959</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-color" style="background-color: #a032b2;"></div>
+        <span>1960-1969</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-color" style="background-color: #d124a9;"></div>
+        <span>1970-1979</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-color" style="background-color: #fd4dab;"></div>
+        <span>1980-1989</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-color" style="background-color: #fea7d4;"></div>
+        <span>1990-1999</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-color" style="background-color: #ff7911;"></div>
+        <span>2000-2009</span>
+      </div>
+    </div>
     <script>
-      mapboxgl.accessToken = "YOUR_MAPBOX_ACCESS_TOKEN";  // Replace with your Mapbox token
+      mapboxgl.accessToken = "{mapbox_access_token}";
       var map = new mapboxgl.Map({{
         container: "map",
         style: "mapbox://styles/mapbox/light-v10",  // Light grey base map
@@ -123,18 +117,64 @@ map_html = f"""
         zoom: 12,
       }});
 
-      // Add Sentinel-2 imagery as a raster layer
+      // Add vector tile layers
       map.on("load", function () {{
-        map.addSource("sentinel2", {{
-          type: "raster",
-          tiles: ["https://your-tile-server-url/{z}/{x}/{y}.png"],  // Replace with your tile server URL
-          tileSize: 256,
+        map.addSource("tileset1890", {{
+          type: "vector",
+          tiles: ["https://builtla.planninglabs.la/1890-1899/{{z}}/{{x}}/{{y}}.pbf"],
         }});
         map.addLayer({{
-          id: "sentinel2",
-          type: "raster",
-          source: "sentinel2",
-          paint: {{}},
+          id: "tileset1890",
+          type: "fill",
+          source: "tileset1890",
+          "source-layer": "1890-1899",
+          paint: {{
+            "fill-color": "#d7d4d4",
+            "fill-opacity": 0.6,
+          }},
+        }});
+
+        map.addSource("tileset1900", {{
+          type: "vector",
+          tiles: ["https://builtla.planninglabs.la/1900-1909/{{z}}/{{x}}/{{y}}.pbf"],
+        }});
+        map.addLayer({{
+          id: "tileset1900",
+          type: "fill",
+          source: "tileset1900",
+          "source-layer": "1900-1909",
+          paint: {{
+            "fill-color": "#22ecf0",
+            "fill-opacity": 0.6,
+          }},
+        }});
+
+        map.addSource("tileset1910", {{
+          type: "vector",
+          tiles: ["https://builtla.planninglabs.la/1910-1919/{{z}}/{{x}}/{{y}}.pbf"],
+        }});
+        map.addLayer({{
+          id: "tileset1910",
+          type: "fill",
+          source: "tileset1910",
+          "source-layer": "1910-1919",
+          paint: {{
+            "fill-color": "#19d1fd",
+            "fill-opacity": 0.6,
+          }},
+        }});
+
+        // Add click event to display address and year built
+        map.on("click", function (e) {{
+          var features = map.queryRenderedFeatures(e.point, {{
+            layers: ["tileset1890", "tileset1900", "tileset1910"], // Add all layer IDs here
+          }});
+          if (features.length > 0) {{
+            var feature = features[0];
+            var address = feature.properties.address || "Unknown address";
+            var yearBuilt = feature.properties.YearBuilt || "Unknown year";
+            alert("Address: " + address + "\\nYear Built: " + yearBuilt);
+          }}
         }});
       }});
     </script>
