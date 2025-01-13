@@ -18,26 +18,16 @@ map_html = f"""
     <title>Age of Los Angeles</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
     <link
-      rel="stylesheet"
-      href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
-    />
-    <link
-      href="https://fonts.googleapis.com/css?family=Lato:400,700,400italic"
-      rel="stylesheet"
-      type="text/css"
-    />
-    <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
-    <script src="https://api.mapbox.com/mapbox-gl-js/v0.32.1/mapbox-gl.js"></script>
-    <link
-      href="https://api.mapbox.com/mapbox-gl-js/v0.32.1/mapbox-gl.css"
+      href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css"
       rel="stylesheet"
     />
     <style>
       body {{
         margin: 0;
         padding: 0;
-        font-family: "Lato", sans-serif;
+        font-family: Arial, sans-serif;
       }}
       #map {{
         position: absolute;
@@ -45,16 +35,6 @@ map_html = f"""
         bottom: 0;
         width: 100%;
         height: 600px;
-      }}
-      #builtbox {{
-        position: absolute;
-        bottom: 10px;
-        left: 10px;
-        background: rgba(255, 255, 255, 0.8);
-        padding: 10px;
-        font-size: 14px;
-        border-radius: 5px;
-        box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
       }}
       #legend {{
         position: absolute;
@@ -81,7 +61,6 @@ map_html = f"""
   </head>
   <body>
     <div id="map"></div>
-    <div id="builtbox">Hover over a building for year built</div>
     <div id="legend">
       <h4>Legend</h4>
       <div class="legend-item">
@@ -134,84 +113,66 @@ map_html = f"""
       </div>
     </div>
     <script>
-      var tileset1890 = "https://builtla.planninglabs.la/1890-1899/{{z}}/{{x}}/{{y}}.pbf";
-      var tileset1900 = "https://builtla.planninglabs.la/1900-1909/{{z}}/{{x}}/{{y}}.pbf";
-      var tileset1910 = "https://builtla.planninglabs.la/1910-1919/{{z}}/{{x}}/{{y}}.pbf";
-      var tileset1920 = "https://builtla.planninglabs.la/1920-1929/{{z}}/{{x}}/{{y}}.pbf";
-      var tileset1930 = "https://builtla.planninglabs.la/1930-1939/{{z}}/{{x}}/{{y}}.pbf";
-      var tileset1940 = "https://builtla.planninglabs.la/1940-1949/{{z}}/{{x}}/{{y}}.pbf";
-      var tileset1950 = "https://builtla.planninglabs.la/1950-1959/{{z}}/{{x}}/{{y}}.pbf";
-      var tileset1960 = "https://builtla.planninglabs.la/1960-1969/{{z}}/{{x}}/{{y}}.pbf";
-      var tileset1970 = "https://builtla.planninglabs.la/1970-1979/{{z}}/{{x}}/{{y}}.pbf";
-      var tileset1980 = "https://builtla.planninglabs.la/1980-1989/{{z}}/{{x}}/{{y}}.pbf";
-      var tileset1990 = "https://builtla.planninglabs.la/1990-1999/{{z}}/{{x}}/{{y}}.pbf";
-      var tileset2000 = "https://builtla.planninglabs.la/2000-2009/{{z}}/{{x}}/{{y}}.pbf";
+      mapboxgl.accessToken = "{mapbox_access_token}";
+      var map = new mapboxgl.Map({{
+        container: "map",
+        style: "mapbox://styles/mapbox/streets-v11",
+        center: [-118.2621, 34.0267],
+        zoom: 12,
+      }});
 
-      var mapStyle = {{
-        version: 8,
-        sources: {{
-          tileset1890: {{
+      // Add vector tile layers
+      var layers = [
+        {{
+          id: "tileset1890",
+          source: {{
             type: "vector",
-            tiles: [tileset1890],
+            tiles: ["https://builtla.planninglabs.la/1890-1899/{{z}}/{{x}}/{{y}}.pbf"],
           }},
-          tileset1900: {{
-            type: "vector",
-            tiles: [tileset1900],
+          "source-layer": "1890-1899",
+          paint: {{
+            "fill-color": "#d7d4d4",
           }},
-          tileset1910: {{
-            type: "vector",
-            tiles: [tileset1910],
-          }},
-          tileset1920: {{
-            type: "vector",
-            tiles: [tileset1920],
-          }},
-          tileset1930: {{
-            type: "vector",
-            tiles: [tileset1930],
-          }},
-          tileset1940: {{
-            type: "vector",
-            tiles: [tileset1940],
-          }},
-          tileset1950: {{
-            type: "vector",
-            tiles: [tileset1950],
-          }},
-          tileset1960: {{
-            type: "vector",
-            tiles: [tileset1960],
-          }},
-          tileset1970: {{
-            type: "vector",
-            tiles: [tileset1970],
-          }},
-          tileset1980: {{
-            type: "vector",
-            tiles: [tileset1980],
-          }},
+          type: "fill",
         }},
-        layers: [
-          {{
-            id: "tileset1890",
-            source: "tileset1890",
-            "source-layer": "1890-1899",
-            paint: {{
-              "fill-color": "#d7d4d4",
-            }},
-            type: "fill",
+        {{
+          id: "tileset1900",
+          source: {{
+            type: "vector",
+            tiles: ["https://builtla.planninglabs.la/1900-1909/{{z}}/{{x}}/{{y}}.pbf"],
           }},
-          {{
-            id: "tileset1900",
-            source: "tileset1900",
-            "source-layer": "1900-1909",
-            paint: {{
-              "fill-color": "#22ecf0",
-            }},
-            type: "fill",
+          "source-layer": "1900-1909",
+          paint: {{
+            "fill-color": "#22ecf0",
           }},
-        ],
-      }};
+          type: "fill",
+        }},
+        {{
+          id: "tileset1910",
+          source: {{
+            type: "vector",
+            tiles: ["https://builtla.planninglabs.la/1910-1919/{{z}}/{{x}}/{{y}}.pbf"],
+          }},
+          "source-layer": "1910-1919",
+          paint: {{
+            "fill-color": "#19d1fd",
+          }},
+          type: "fill",
+        }},
+      ];
+
+      // Add layers to the map
+      layers.forEach(function (layer) {{
+        map.addLayer(layer);
+      }});
+
+      // Filter for pre-1980 buildings
+      var showPre1980 = {str(show_pre_1980).lower()};
+      if (!showPre1980) {{
+        layers.forEach(function (layer) {{
+          map.setLayoutProperty(layer.id, "visibility", "none");
+        }});
+      }}
     </script>
   </body>
 </html>
