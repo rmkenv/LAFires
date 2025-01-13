@@ -112,7 +112,7 @@ map_html = f"""
       mapboxgl.accessToken = "{mapbox_access_token}";
       var map = new mapboxgl.Map({{
         container: "map",
-        style: "mapbox://styles/mapbox/streets-v11",
+        style: "mapbox://styles/mapbox/light-v10",  // Light grey base map
         center: [-118.2621, 34.0267],
         zoom: 12,
       }});
@@ -162,6 +162,19 @@ map_html = f"""
             "fill-color": "#19d1fd",
             "fill-opacity": 0.6,
           }},
+        }});
+
+        // Add click event to display address and year built
+        map.on("click", function (e) {{
+          var features = map.queryRenderedFeatures(e.point, {{
+            layers: ["tileset1890", "tileset1900", "tileset1910"], // Add all layer IDs here
+          }});
+          if (features.length > 0) {{
+            var feature = features[0];
+            var address = feature.properties.address || "Unknown address";
+            var yearBuilt = feature.properties.YearBuilt || "Unknown year";
+            alert("Address: " + address + "\\nYear Built: " + yearBuilt);
+          }}
         }});
       }});
     </script>
