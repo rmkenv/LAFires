@@ -6,10 +6,6 @@ st.title("Age of Los Angeles")
 # Mapbox access token
 mapbox_access_token = "pk.eyJ1IjoiY3J1emluNzN2dyIsImEiOiI3RDdhUi1NIn0.jaEqREZw7QQMRafKPNBdmA"
 
-# Sidebar for filtering
-st.sidebar.title("Filter Options")
-show_pre_1980 = st.sidebar.checkbox("Show buildings built before 1980", value=True)
-
 # HTML code for the Mapbox map
 map_html = f"""
 <!DOCTYPE html>
@@ -122,57 +118,52 @@ map_html = f"""
       }});
 
       // Add vector tile layers
-      var layers = [
-        {{
+      map.on("load", function () {{
+        map.addSource("tileset1890", {{
+          type: "vector",
+          tiles: ["https://builtla.planninglabs.la/1890-1899/{{z}}/{{x}}/{{y}}.pbf"],
+        }});
+        map.addLayer({{
           id: "tileset1890",
-          source: {{
-            type: "vector",
-            tiles: ["https://builtla.planninglabs.la/1890-1899/{{z}}/{{x}}/{{y}}.pbf"],
-          }},
+          type: "fill",
+          source: "tileset1890",
           "source-layer": "1890-1899",
           paint: {{
             "fill-color": "#d7d4d4",
+            "fill-opacity": 0.6,
           }},
-          type: "fill",
-        }},
-        {{
+        }});
+
+        map.addSource("tileset1900", {{
+          type: "vector",
+          tiles: ["https://builtla.planninglabs.la/1900-1909/{{z}}/{{x}}/{{y}}.pbf"],
+        }});
+        map.addLayer({{
           id: "tileset1900",
-          source: {{
-            type: "vector",
-            tiles: ["https://builtla.planninglabs.la/1900-1909/{{z}}/{{x}}/{{y}}.pbf"],
-          }},
+          type: "fill",
+          source: "tileset1900",
           "source-layer": "1900-1909",
           paint: {{
             "fill-color": "#22ecf0",
+            "fill-opacity": 0.6,
           }},
-          type: "fill",
-        }},
-        {{
+        }});
+
+        map.addSource("tileset1910", {{
+          type: "vector",
+          tiles: ["https://builtla.planninglabs.la/1910-1919/{{z}}/{{x}}/{{y}}.pbf"],
+        }});
+        map.addLayer({{
           id: "tileset1910",
-          source: {{
-            type: "vector",
-            tiles: ["https://builtla.planninglabs.la/1910-1919/{{z}}/{{x}}/{{y}}.pbf"],
-          }},
+          type: "fill",
+          source: "tileset1910",
           "source-layer": "1910-1919",
           paint: {{
             "fill-color": "#19d1fd",
+            "fill-opacity": 0.6,
           }},
-          type: "fill",
-        }},
-      ];
-
-      // Add layers to the map
-      layers.forEach(function (layer) {{
-        map.addLayer(layer);
-      }});
-
-      // Filter for pre-1980 buildings
-      var showPre1980 = {str(show_pre_1980).lower()};
-      if (!showPre1980) {{
-        layers.forEach(function (layer) {{
-          map.setLayoutProperty(layer.id, "visibility", "none");
         }});
-      }}
+      }});
     </script>
   </body>
 </html>
