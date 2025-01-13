@@ -6,6 +6,10 @@ st.title("Age of Los Angeles")
 # Mapbox access token
 mapbox_access_token = "pk.eyJ1IjoiY3J1emluNzN2dyIsImEiOiI3RDdhUi1NIn0.jaEqREZw7QQMRafKPNBdmA"
 
+# Sidebar for filtering
+st.sidebar.title("Filter Options")
+show_pre_1980 = st.sidebar.checkbox("Show buildings built before 1980", value=True)
+
 # HTML code for the Mapbox map
 map_html = f"""
 <!DOCTYPE html>
@@ -52,11 +56,83 @@ map_html = f"""
         border-radius: 5px;
         box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
       }}
+      #legend {{
+        position: absolute;
+        bottom: 10px;
+        right: 10px;
+        background: rgba(255, 255, 255, 0.8);
+        padding: 10px;
+        font-size: 14px;
+        border-radius: 5px;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+      }}
+      .legend-item {{
+        display: flex;
+        align-items: center;
+        margin-bottom: 5px;
+      }}
+      .legend-color {{
+        width: 20px;
+        height: 20px;
+        margin-right: 10px;
+        border-radius: 3px;
+      }}
     </style>
   </head>
   <body>
     <div id="map"></div>
     <div id="builtbox">Hover over a building for year built</div>
+    <div id="legend">
+      <h4>Legend</h4>
+      <div class="legend-item">
+        <div class="legend-color" style="background-color: #d7d4d4;"></div>
+        <span>1890-1899</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-color" style="background-color: #22ecf0;"></div>
+        <span>1900-1909</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-color" style="background-color: #19d1fd;"></div>
+        <span>1910-1919</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-color" style="background-color: #14b1fd;"></div>
+        <span>1920-1929</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-color" style="background-color: #2c7fdb;"></div>
+        <span>1930-1939</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-color" style="background-color: #3d52bf;"></div>
+        <span>1940-1949</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-color" style="background-color: #6539b3;"></div>
+        <span>1950-1959</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-color" style="background-color: #a032b2;"></div>
+        <span>1960-1969</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-color" style="background-color: #d124a9;"></div>
+        <span>1970-1979</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-color" style="background-color: #fd4dab;"></div>
+        <span>1980-1989</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-color" style="background-color: #fea7d4;"></div>
+        <span>1990-1999</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-color" style="background-color: #ff7911;"></div>
+        <span>2000-2009</span>
+      </div>
+    </div>
     <script>
       var tileset1890 = "https://builtla.planninglabs.la/1890-1899/{{z}}/{{x}}/{{y}}.pbf";
       var tileset1900 = "https://builtla.planninglabs.la/1900-1909/{{z}}/{{x}}/{{y}}.pbf";
@@ -114,14 +190,6 @@ map_html = f"""
             type: "vector",
             tiles: [tileset1980],
           }},
-          tileset1990: {{
-            type: "vector",
-            tiles: [tileset1990],
-          }},
-          tileset2000: {{
-            type: "vector",
-            tiles: [tileset2000],
-          }},
         }},
         layers: [
           {{
@@ -142,116 +210,8 @@ map_html = f"""
             }},
             type: "fill",
           }},
-          {{
-            id: "tileset1910",
-            source: "tileset1910",
-            "source-layer": "1910-1919",
-            paint: {{
-              "fill-color": "#19d1fd",
-            }},
-            type: "fill",
-          }},
-          {{
-            id: "tileset1920",
-            source: "tileset1920",
-            "source-layer": "1920-1929",
-            paint: {{
-              "fill-color": "#14b1fd",
-            }},
-            type: "fill",
-          }},
-          {{
-            id: "tileset1930",
-            source: "tileset1930",
-            "source-layer": "1930-1939",
-            paint: {{
-              "fill-color": "#2c7fdb",
-            }},
-            type: "fill",
-          }},
-          {{
-            id: "tileset1940",
-            source: "tileset1940",
-            "source-layer": "1940-1949",
-            paint: {{
-              "fill-color": "#3d52bf",
-            }},
-            type: "fill",
-          }},
-          {{
-            id: "tileset1950",
-            source: "tileset1950",
-            "source-layer": "1950-1959",
-            paint: {{
-              "fill-color": "#6539b3",
-            }},
-            type: "fill",
-          }},
-          {{
-            id: "tileset1960",
-            source: "tileset1960",
-            "source-layer": "1960-1969",
-            paint: {{
-              "fill-color": "#a032b2",
-            }},
-            type: "fill",
-          }},
-          {{
-            id: "tileset1970",
-            source: "tileset1970",
-            "source-layer": "1970-1979",
-            paint: {{
-              "fill-color": "#d124a9",
-            }},
-            type: "fill",
-          }},
-          {{
-            id: "tileset1980",
-            source: "tileset1980",
-            "source-layer": "1980-1989",
-            paint: {{
-              "fill-color": "#fd4dab",
-            }},
-            type: "fill",
-          }},
-          {{
-            id: "tileset1990",
-            source: "tileset1990",
-            "source-layer": "1990-1999",
-            paint: {{
-              "fill-color": "#fea7d4",
-            }},
-            type: "fill",
-          }},
-          {{
-            id: "tileset2000",
-            source: "tileset2000",
-            "source-layer": "2000-2009",
-            paint: {{
-              "fill-color": "#ff7911",
-            }},
-            type: "fill",
-          }},
         ],
       }};
-
-      mapboxgl.accessToken = "{mapbox_access_token}";
-      var map = new mapboxgl.Map({{
-        container: "map",
-        style: mapStyle,
-        center: [-118.2621, 34.0267],
-        zoom: 12,
-      }});
-
-      map.on("mousemove", (e) => {{
-        const features = map.queryRenderedFeatures(e.point);
-        if (features[0]) {{
-          document.getElementById("builtbox").innerHTML =
-            features[0].properties.address +
-            " was built in " +
-            features[0].properties.YearBuilt;
-        }}
-      }});
     </script>
   </body>
 </html>
